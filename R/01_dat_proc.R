@@ -7,6 +7,8 @@ stop_for_status(req)
 filelist <- unlist(lapply(content(req)$tree, "[", "path"), use.names = F)
 fls <- grep("data/", filelist, value = TRUE, fixed = TRUE)
 
+# fls <- fls[!fls %in% gsub('\\.zip$', '.RData', list.files('data', full.names = T))]
+
 for(fl in fls){
 
   cat(fl, '\n')

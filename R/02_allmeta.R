@@ -11,16 +11,17 @@ library(tidyverse)
 attributes <-
   tibble::tribble(
     ~attributeName, ~attributeDefinition,              ~formatString,  ~definition,                      ~unit, ~numberType,
-    "ATTRIBUTE",    "NWI wetland attribute",           NA,            "NWI wetland attribute",           NA,              NA,
-    "ACRES",        "Wetland acres",                   NA,            "Wetland acres",                   "acre",          'real',
-    "WETLAND_TYPE", "NWI wetland type",                NA,            "NWI wetland type",                NA,              NA,
-    "LON",          "Longitude of wetland centroid",   NA,            "Longitude WGS84",                 "dimensionless", "real",
-    "LAT",          "Latitude of wetland centroid",    NA,            "Latitude WGS84",                  "dimensionless", "real",
-    "neardist",     "Distance to nearest NHD feature", NA,            "Distance to nearest NHD feature", "meter",         "real",
-    "state",        "State abbreviation",              NA,            "State abbreviation",              NA,              "real"
+    "acres",        "Wetland acres",                   NA,            "Wetland acres",                   "acre",          'real',
+    "lon",          "Longitude of wetland centroid",   NA,            "Longitude WGS84",                 "dimensionless", "real",
+    "lat",          "Latitude of wetland centroid",    NA,            "Latitude WGS84",                  "dimensionless", "real",
+    "nearest_m",    "Distance to nearest NHD feature", NA,            "Distance to nearest NHD feature", "meter",         "real",
+    "calculated",   "T/F for distance calculation",    NA,            "T/F for distance calculation",    NA,              NA,
+    "state",        "State abbreviation",              NA,            "State abbreviation",              NA,              NA,
+    "wetland_type", "NWI wetland type",                NA,            "NWI wetland type",                NA,              NA,
+    "GAP_Sts",      "GAP status",                      NA,            "GAP status",                      "dimensionless", "real"
   )
 
-attributeList <- set_attributes(attributes, col_classes = c("character", "numeric", "character", "numeric", "numeric", "numeric", "character"))
+attributeList <- set_attributes(attributes, col_classes = c("numeric", "numeric", "numeric", "numeric", "character", "character", "character", "numeric"))
 
 fls <- list.files('data')
 
@@ -45,8 +46,8 @@ for(fl in fls){
 geographicDescription <- "Conterminous United States, plus Alaska and Hawaii"
 
 coverage <- set_coverage(
-  begin = '2023-06-05',
-  end = '2023-07-21',
+  begin = '2024-01-22',
+  end = '2024-02-07',
   geographicDescription = geographicDescription,
   west = -168.20,
   east = -66.77,
@@ -86,7 +87,7 @@ keywordSet <- list(
 
 title <- "Distance to nearest hydrologic feature for all wetlands in the National Wetland Inventory"
 
-abstract <- 'Under the 2023 Supreme Court decision for Sackett vs USEPA, wetlands are jurisdictional to Waters of the United States (WOTUS) if 1) a continuous surface connection is present with an existing WOTUS, and 2) the wetland is practically indistinguishable from an ocean, river, stream, or lake where the continuous surface water connection is identified. A national-scale assessment for the United States was conducted to identify potential geographically isolated wetlands. The National Wetland Inventory (NWI, https://www.fws.gov/program/national-wetlands-inventory) maintained by the US Fish and Wildlife Service and the National Hydrograpy Dataset (NHD, https://www.usgs.gov/national-hydrography/national-hydrography-dataset) maintained by the US Geological Survey were used for the assessment. A custom workflow (https://github.com/tbep-tech/wetlands-eval) was developed to iteratively download the NWI and NHD spatial layers for each state to identify isolated wetlands based on the Euclidean distance of each wetland centroid to NHD features.  These data files represent all NWI wetlands in the United States and the distance (meters) to the closest NHD feature. The rows in each file represent individual wetlands, with columns for the wetland attribute, acreage of the wetland, latitude and longitude (WGS 1984) of the wetland centroid, distance of the wetland in meters to the nearest NHD feature, the state abbreviation, and wetland type.'
+abstract <- 'Under the 2023 Supreme Court decision for Sackett vs USEPA, wetlands are jurisdictional to Waters of the United States (WOTUS) if 1) a continuous surface connection is present with an existing WOTUS, and 2) the wetland is practically indistinguishable from an ocean, river, stream, or lake where the continuous surface water connection is identified. A national-scale assessment for the United States was conducted to identify potential geographically isolated wetlands. The National Wetland Inventory (NWI, https://www.fws.gov/program/national-wetlands-inventory) maintained by the US Fish and Wildlife Service and the National Hydrograpy Dataset (NHD, https://www.usgs.gov/national-hydrography/national-hydrography-dataset) maintained by the US Geological Survey were used for the assessment. A custom workflow (https://github.com/tbep-tech/wetlands-eval) was developed to iteratively download the NWI and NHD spatial layers for each state to identify isolated wetlands based on the Euclidean distance of each wetland centroid to NHD features.  These data files represent all NWI wetlands in the United States and the distance (meters) to the closest NHD feature. The total number of wetlands is less than that in the original NWI data given that polygons within 0.5 meters were combined into a single wetland complex. The rows in each file represent these polygons, with columns for acreage of the wetland, latitude and longitude (WGS 1984) of the wetland centroid, distance of the wetland in meters to the nearest NHD feature, whether distance was calculated (assumed zero distance), the state abbreviation, wetland type, and GAP status (Gap Analysis Project).'
 
 intellectualRights <- 'This dataset is released to the public and may be freely downloaded. Please keep the designated contact person informed of any plans to use the dataset. Consultation or collaboration with the original investigators is strongly encouraged. Publications and data products that make use of the dataset must include proper acknowledgement.'
 

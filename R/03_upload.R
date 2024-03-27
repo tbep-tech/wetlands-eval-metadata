@@ -25,6 +25,9 @@ mn <- getMNode(cn, 'urn:node:KNB')
 # verify credentials authenticated
 echoCredentials(cn)
 
+##
+# new package
+
 # initiate data package
 dp <- new('DataPackage')
 
@@ -51,10 +54,34 @@ packageId <- uploadDataPackage(cli, dp, public = TRUE, accessRules = myAccessRul
 message(sprintf('Uploaded package with identifier: %s', packageId))
 
 ##
-# # update metadata
-# cn <- CNode("STAGING")
-# mn <- getMNode(cn, "urn:node:mnStageUCSB2")
-# sysmeta <- getSystemMetadata(mn, doi)
-# sysmeta <- addAccessRule(sysmeta, "public", "read")
-# status <- updateSystemMetadata(mn, doi, sysmeta)
+# update data objects and metadata file
+
+# download package
+cli <- D1Client(cn, mn)
+doi <- 'resource_map_doi:10.5063/F1M043V0'
+pkg <- getDataPackage(cli, identifier = doi, lazyLoad = TRUE, quiet = FALSE)
+
+# update zip files
+fls <- list.files(here('data'), full.names = T)
+
+for(fl in fls){
+
+  cat(fl, '\n')
+
+  objId <- selectMember(pkg, name = "sysmeta@fileName", value = basename(fl))
+  zipfile <- fl
+  pkg <- replaceMember(pkg, objId, replacement = zipfile, formatId="zip")
+
+}
+
+# update metadata
+objId <- selectMember(pkg, name = "sysmeta@fileName", value = 'wetlanddat.xml')
+newmeta <- here('wetlanddat.xml')
+pkg <- replaceMember(pkg, objId, replacement=newmeta, formatId="eml://ecoinformatics.org/eml-2.1.1")
+
+# upload the updated pkg
+uploadDataPackage(cli, pkg, public=TRUE, quiet=FALSE)
+
+# # archive a dataset
+# archive(mn, 'resource_map_doi:10.5063/F10V8B8T')
 
